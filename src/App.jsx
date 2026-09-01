@@ -1,41 +1,230 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-/* SVG Assets */
+/* ===================================
+   SVG Assets
+=================================== */
+
 const svgData = (svg) => `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 
-const logoMark = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><defs><linearGradient id="g" x1="5" y1="5" x2="45" y2="45"><stop stop-color="#00dceb"/><stop offset=".46" stop-color="#278ff3"/><stop offset="1" stop-color="#7143df"/></linearGradient></defs><path d="M6 5h38L22 24.5 44 45H6V5Z" fill="url(#g)"/></svg>`);
+const logoMark = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+    <defs>
+        <linearGradient id="logoGradient" x1="5" y1="5" x2="45" y2="45">
+            <stop stop-color="#00dceb"/>
+            <stop offset=".46" stop-color="#278ff3"/>
+            <stop offset="1" stop-color="#7143df"/>
+        </linearGradient>
+    </defs>
 
-const avatarImage = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><defs><linearGradient id="s" x1="28" y1="16" x2="50" y2="57"><stop stop-color="#f2c99f"/><stop offset="1" stop-color="#c98157"/></linearGradient></defs><circle cx="40" cy="40" r="39" fill="#eee7df"/><path d="M18 79c2-18 10-28 22-28s20 10 22 28H18Z" fill="#3e4d68"/><ellipse cx="40" cy="34" rx="15" ry="18" fill="url(#s)"/><path d="M24 31c1-16 28-23 33-3-7-7-23-10-33 3Z" fill="#52382d"/><circle cx="34" cy="34" r="1.4" fill="#283044"/><circle cx="46" cy="34" r="1.4" fill="#283044"/><path d="M35 43c3.5 2.6 7 2.6 10 0" fill="none" stroke="#99594d" stroke-width="1.4" stroke-linecap="round"/><path d="M28.5 32.5h10.5M41 32.5h10.5M39 32.5h2" fill="none" stroke="#434a5b" stroke-width="1.2"/></svg>`);
+    <path d="M6 5h38L22 24.5 44 45H6V5Z" fill="url(#logoGradient)"/>
+</svg>
+`);
 
-const usFlag = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><defs><clipPath id="c"><circle cx="20" cy="20" r="19"/></clipPath></defs><g clip-path="url(#c)"><rect width="40" height="40" fill="#fff"/><path fill="#e62f44" d="M0 0h40v4H0zm0 8h40v4H0zm0 8h40v4H0zm0 8h40v4H0zm0 8h40v4H0"/><rect width="18" height="22" fill="#22478c"/><g fill="#fff" opacity=".95"><circle cx="4" cy="4" r="1"/><circle cx="9" cy="4" r="1"/><circle cx="14" cy="4" r="1"/><circle cx="6.5" cy="9" r="1"/><circle cx="11.5" cy="9" r="1"/><circle cx="4" cy="14" r="1"/><circle cx="9" cy="14" r="1"/><circle cx="14" cy="14" r="1"/></g></g><circle cx="20" cy="20" r="19" fill="none" stroke="#e4e8ef"/></svg>`);
+const avatarImage = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+    <defs>
+        <linearGradient id="skinGradient" x1="28" y1="16" x2="50" y2="57">
+            <stop stop-color="#f2c99f"/>
+            <stop offset="1" stop-color="#c98157"/>
+        </linearGradient>
+    </defs>
 
-const btcIcon = (background = "#ffb52f") => svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="${background}"/><path d="M27.8 15.1c-.4-3-3-4-6.2-4.3V7.5h-2v3.2H18V7.5h-2v3.3h-4v2.1l3 .5v16.1l-3 .5v2.1h4v3.3h2v-3.2h1.6v3.2h2v-3.3c4-.3 6.8-1.5 7.4-5.3.4-3.1-1.2-4.5-3.8-5.2 1.8-.8 3-2.5 2.6-5.5ZM17.7 15c2.6 0 5.4-.3 5.4 2.4 0 2.5-2.8 2.4-5.4 2.4V15Zm0 12.8v-5.3c3.1 0 6.4-.3 6.4 2.7 0 2.9-3.3 2.6-6.4 2.6Z" fill="#fff"/></svg>`);
+    <circle cx="40" cy="40" r="39" fill="#eee7df"/>
 
-const ethIcon = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#607ce8"/><path d="m22 7.5-9 14.7 9 5.2 9-5.2L22 7.5Z" fill="#fff"/><path d="m22 29.2-9-5.1L22 36.5l9-12.4-9 5.1Z" fill="#dbe3ff"/></svg>`);
+    <path d="M18 79c2-18 10-28 22-28s20 10 22 28H18Z" fill="#3e4d68"/>
 
-const xrpIcon = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#168fc8"/><path d="M10.5 11.8h4.8l7 7.2 7-7.2h4.2L24.4 21c-1.3 1.2-3 1.2-4.3 0l-9.6-9.2Zm23 20.4h-4.8l-7-7.2-7 7.2h-4.2l9.1-9.2c1.3-1.2 3-1.2 4.3 0l9.6 9.2Z" fill="#fff"/></svg>`);
+    <ellipse cx="40" cy="34" rx="15" ry="18" fill="url(#skinGradient)"/>
 
-const xemIcon = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#18c6b5"/><path d="M10 14.5 22 9l12 5.5c-.5 10.6-4.3 17.5-12 21-7.7-3.5-11.5-10.4-12-21Z" fill="none" stroke="#fff" stroke-width="1.7"/><path d="m13.5 15.4 8.4 5.8 8.6-5.8M22 21.2v9.3" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg>`);
+    <path d="M24 31c1-16 28-23 33-3-7-7-23-10-33 3Z" fill="#52382d"/>
 
-const ltcIcon = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#b9bbc2"/><path d="m17.4 12.4 6.1-1.3-2.4 10.1 5.6-2.1-.9 3.5-5.6 2.1-1 4.1h11.4l-1 4H12.8l1.7-6.3-3 1.1.9-3.6 3-1.1 2-10.5Z" fill="#fff"/></svg>`);
+    <circle cx="34" cy="34" r="1.4" fill="#283044"/>
 
-const etcIcon = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#22b76c"/><path d="m22 8-9 14.2 9 4.8 9-4.8L22 8Z" fill="#fff"/><path d="m22 28.9-9-4.9 9 12 9-12-9 4.9Z" fill="#d9f5e5"/></svg>`);
+    <circle cx="46" cy="34" r="1.4" fill="#283044"/>
 
-const fctIcon = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#7199b3"/><path d="M13 12.5h18v4H17v5.5h11v4H17v8h-4V12.5Z" fill="#fff"/></svg>`);
+    <path d="M35 43c3.5 2.6 7 2.6 10 0" fill="none" stroke="#99594d" stroke-width="1.4" stroke-linecap="round"/>
 
-const lskIcon = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#17375f"/><path d="M22 8 11.5 27.2 22 36l10.5-8.8L22 8Zm0 8.4 5.7 10-5.7 4.8-5.7-4.8 5.7-10Z" fill="#fff"/></svg>`);
+    <path d="M28.5 32.5h10.5M41 32.5h10.5M39 32.5h2" fill="none" stroke="#434a5b" stroke-width="1.2"/>
+</svg>
+`);
 
-const adaIcon = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#326fd1"/><g fill="#fff"><circle cx="22" cy="22" r="3"/><circle cx="22" cy="12" r="1.7"/><circle cx="22" cy="32" r="1.7"/><circle cx="12" cy="22" r="1.7"/><circle cx="32" cy="22" r="1.7"/><circle cx="15" cy="15" r="1.2"/><circle cx="29" cy="15" r="1.2"/><circle cx="15" cy="29" r="1.2"/><circle cx="29" cy="29" r="1.2"/></g></svg>`);
+const usFlag = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+    <defs>
+        <clipPath id="flagClip">
+            <circle cx="20" cy="20" r="19"/>
+        </clipPath>
+    </defs>
 
-const solIcon = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44"><defs><linearGradient id="sg" x1="10" y1="10" x2="34" y2="34"><stop stop-color="#42f6be"/><stop offset=".5" stop-color="#21c5ec"/><stop offset="1" stop-color="#9e50ff"/></linearGradient></defs><circle cx="22" cy="22" r="21" fill="#171d30"/><path d="M13 13h19l-4 4H9l4-4Zm-4 9h19l4 4H13l-4-4Zm4 9h19l-4 4H9l4-4Z" fill="url(#sg)"/></svg>`);
+    <g clip-path="url(#flagClip)">
+        <rect width="40" height="40" fill="#fff"/>
 
-const dogeIcon = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#cba83f"/><path d="M15 11h9c7 0 11 4.4 11 11s-4 11-11 11h-9v-8h-3v-4h3V11Zm5 4v6h7v4h-7v4h4c4.1 0 6-2.5 6-7s-1.9-7-6-7h-4Z" fill="#fff"/></svg>`);
+        <path fill="#e62f44" d="M0 0h40v4H0zm0 8h40v4H0zm0 8h40v4H0zm0 8h40v4H0zm0 8h40v4H0"/>
 
-const purpleCorner = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 150"><defs><linearGradient id="pc" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4d6cff"/><stop offset="1" stop-color="#9a70ea"/></linearGradient></defs><path d="M180 0v150H0L180 0Z" fill="url(#pc)"/><g opacity=".25" fill="none" stroke="#4546bd" stroke-width="5"><circle cx="132" cy="93" r="19"/><path d="M110 93h44M132 71v44M93 79l39-26 35 24v43l-35 22-39-22V79Z"/></g></svg>`);
+        <rect width="18" height="22" fill="#22478c"/>
 
-const blueCorner = svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 150"><defs><linearGradient id="bc" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#32c8ef"/><stop offset="1" stop-color="#168ed9"/></linearGradient></defs><path d="M180 0v150H0L180 0Z" fill="url(#bc)"/><g opacity=".2" fill="none" stroke="#fff" stroke-width="4"><circle cx="133" cy="97" r="22"/><path d="m120 97 8 8 18-21"/></g></svg>`);
+        <g fill="#fff">
+            <circle cx="4" cy="4" r="1"/>
+            <circle cx="9" cy="4" r="1"/>
+            <circle cx="14" cy="4" r="1"/>
+            <circle cx="6.5" cy="9" r="1"/>
+            <circle cx="11.5" cy="9" r="1"/>
+            <circle cx="4" cy="14" r="1"/>
+            <circle cx="9" cy="14" r="1"/>
+            <circle cx="14" cy="14" r="1"/>
+        </g>
+    </g>
 
-/* Dashboard Data */
+    <circle cx="20" cy="20" r="19" fill="none" stroke="#e4e8ef"/>
+</svg>
+`);
+
+const btcIcon = (background = "#ffb52f") => svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+    <circle cx="22" cy="22" r="21" fill="${background}"/>
+
+    <path d="M27.8 15.1c-.4-3-3-4-6.2-4.3V7.5h-2v3.2H18V7.5h-2v3.3h-4v2.1l3 .5v16.1l-3 .5v2.1h4v3.3h2v-3.2h1.6v3.2h2v-3.3c4-.3 6.8-1.5 7.4-5.3.4-3.1-1.2-4.5-3.8-5.2 1.8-.8 3-2.5 2.6-5.5ZM17.7 15c2.6 0 5.4-.3 5.4 2.4 0 2.5-2.8 2.4-5.4 2.4V15Zm0 12.8v-5.3c3.1 0 6.4-.3 6.4 2.7 0 2.9-3.3 2.6-6.4 2.6Z" fill="#fff"/>
+</svg>
+`);
+
+const ethIcon = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+    <circle cx="22" cy="22" r="21" fill="#607ce8"/>
+
+    <path d="m22 7.5-9 14.7 9 5.2 9-5.2L22 7.5Z" fill="#fff"/>
+
+    <path d="m22 29.2-9-5.1L22 36.5l9-12.4-9 5.1Z" fill="#dbe3ff"/>
+</svg>
+`);
+
+const xrpIcon = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+    <circle cx="22" cy="22" r="21" fill="#168fc8"/>
+
+    <path d="M10.5 11.8h4.8l7 7.2 7-7.2h4.2L24.4 21c-1.3 1.2-3 1.2-4.3 0l-9.6-9.2Zm23 20.4h-4.8l-7-7.2-7 7.2h-4.2l9.1-9.2c1.3-1.2 3-1.2 4.3 0l9.6 9.2Z" fill="#fff"/>
+</svg>
+`);
+
+const xemIcon = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+    <circle cx="22" cy="22" r="21" fill="#18c6b5"/>
+
+    <path d="M10 14.5 22 9l12 5.5c-.5 10.6-4.3 17.5-12 21-7.7-3.5-11.5-10.4-12-21Z" fill="none" stroke="#fff" stroke-width="1.7"/>
+
+    <path d="m13.5 15.4 8.4 5.8 8.6-5.8M22 21.2v9.3" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
+</svg>
+`);
+
+const ltcIcon = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+    <circle cx="22" cy="22" r="21" fill="#b9bbc2"/>
+
+    <path d="m17.4 12.4 6.1-1.3-2.4 10.1 5.6-2.1-.9 3.5-5.6 2.1-1 4.1h11.4l-1 4H12.8l1.7-6.3-3 1.1.9-3.6 3-1.1 2-10.5Z" fill="#fff"/>
+</svg>
+`);
+
+const etcIcon = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+    <circle cx="22" cy="22" r="21" fill="#22b76c"/>
+
+    <path d="m22 8-9 14.2 9 4.8 9-4.8L22 8Z" fill="#fff"/>
+
+    <path d="m22 28.9-9-4.9 9 12 9-12-9 4.9Z" fill="#d9f5e5"/>
+</svg>
+`);
+
+const fctIcon = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+    <circle cx="22" cy="22" r="21" fill="#7199b3"/>
+
+    <path d="M13 12.5h18v4H17v5.5h11v4H17v8h-4V12.5Z" fill="#fff"/>
+</svg>
+`);
+
+const lskIcon = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+    <circle cx="22" cy="22" r="21" fill="#17375f"/>
+
+    <path d="M22 8 11.5 27.2 22 36l10.5-8.8L22 8Zm0 8.4 5.7 10-5.7 4.8-5.7-4.8 5.7-10Z" fill="#fff"/>
+</svg>
+`);
+
+const adaIcon = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+    <circle cx="22" cy="22" r="21" fill="#326fd1"/>
+
+    <g fill="#fff">
+        <circle cx="22" cy="22" r="3"/>
+        <circle cx="22" cy="12" r="1.7"/>
+        <circle cx="22" cy="32" r="1.7"/>
+        <circle cx="12" cy="22" r="1.7"/>
+        <circle cx="32" cy="22" r="1.7"/>
+        <circle cx="15" cy="15" r="1.2"/>
+        <circle cx="29" cy="15" r="1.2"/>
+        <circle cx="15" cy="29" r="1.2"/>
+        <circle cx="29" cy="29" r="1.2"/>
+    </g>
+</svg>
+`);
+
+const solIcon = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+    <defs>
+        <linearGradient id="solGradient" x1="10" y1="10" x2="34" y2="34">
+            <stop stop-color="#42f6be"/>
+            <stop offset=".5" stop-color="#21c5ec"/>
+            <stop offset="1" stop-color="#9e50ff"/>
+        </linearGradient>
+    </defs>
+
+    <circle cx="22" cy="22" r="21" fill="#171d30"/>
+
+    <path d="M13 13h19l-4 4H9l4-4Zm-4 9h19l4 4H13l-4-4Zm4 9h19l-4 4H9l4-4Z" fill="url(#solGradient)"/>
+</svg>
+`);
+
+const dogeIcon = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+    <circle cx="22" cy="22" r="21" fill="#cba83f"/>
+
+    <path d="M15 11h9c7 0 11 4.4 11 11s-4 11-11 11h-9v-8h-3v-4h3V11Zm5 4v6h7v4h-7v4h4c4.1 0 6-2.5 6-7s-1.9-7-6-7h-4Z" fill="#fff"/>
+</svg>
+`);
+
+const purpleCorner = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 150">
+    <defs>
+        <linearGradient id="purpleGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#4d6cff"/>
+            <stop offset="1" stop-color="#9a70ea"/>
+        </linearGradient>
+    </defs>
+
+    <path d="M180 0v150H0L180 0Z" fill="url(#purpleGradient)"/>
+
+    <g opacity=".25" fill="none" stroke="#4546bd" stroke-width="5">
+        <circle cx="132" cy="93" r="19"/>
+        <path d="M110 93h44M132 71v44M93 79l39-26 35 24v43l-35 22-39-22V79Z"/>
+    </g>
+</svg>
+`);
+
+const blueCorner = svgData(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 150">
+    <defs>
+        <linearGradient id="blueGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#32c8ef"/>
+            <stop offset="1" stop-color="#168ed9"/>
+        </linearGradient>
+    </defs>
+
+    <path d="M180 0v150H0L180 0Z" fill="url(#blueGradient)"/>
+</svg>
+`);
+
+/* ===================================
+   Dashboard Data
+=================================== */
+
 const coinData = {
     BTC: { symbol: "BTC", name: "Bitcoin", price: 721882, displayPrice: "¥ 721,882", change: "-4.66%", trend: "down", color: "#f4ae31", icon: btcIcon(), high: "725,974", low: "718,000", volume: "677.7 BTC" },
     ETH: { symbol: "ETH", name: "Ethereum", price: 22370, displayPrice: "¥ 22,370", change: "+0.45%", trend: "up", color: "#7188f1", icon: ethIcon, high: "23,018", low: "21,841", volume: "8,936 ETH" },
@@ -60,9 +249,23 @@ const sparkData = {
     XRP: [28, 29, 35, 37, 38, 46, 49, 64, 66, 63, 48, 31, 30, 38, 48, 49, 44, 35, 35, 42, 43, 40, 42, 44],
 };
 
-const closeValues = [722100, 722700, 723200, 722800, 723500, 722700, 722900, 722300, 723100, 721700, 722600, 723900, 724400, 724000, 724600, 723700, 722300, 723900, 724500, 723900, 724700, 724100, 723300, 722900, 723800, 723300, 723700, 722900, 723500, 723100, 722600, 722000, 721800, 722600, 723100, 724000, 723700, 724500, 724100, 724900, 724000, 725100, 724200, 723800, 724800, 724100, 724700, 723600, 724400, 723500, 722900, 722600, 721900, 722700, 722100, 721900, 722600, 721500, 721100, 720900, 721500, 721000, 721400, 721100, 722000, 722800, 721900, 723300, 722700, 721600, 722300, 721400];
+const closeValues = [
+    722100, 722700, 723200, 722800, 723500, 722700, 722900, 722300, 723100,
+    721700, 722600, 723900, 724400, 724000, 724600, 723700, 722300, 723900,
+    724500, 723900, 724700, 724100, 723300, 722900, 723800, 723300, 723700,
+    722900, 723500, 723100, 722600, 722000, 721800, 722600, 723100, 724000,
+    723700, 724500, 724100, 724900, 724000, 725100, 724200, 723800, 724800,
+    724100, 724700, 723600, 724400, 723500, 722900, 722600, 721900, 722700,
+    722100, 721900, 722600, 721500, 721100, 720900, 721500, 721000, 721400,
+    721100, 722000, 722800, 721900, 723300, 722700, 721600, 722300, 721400,
+];
 
-const volumeValues = [18, 12, 8, 10, 7, 9, 6, 14, 8, 9, 10, 7, 11, 8, 7, 25, 17, 11, 9, 8, 10, 15, 7, 29, 15, 11, 9, 7, 12, 10, 11, 18, 13, 14, 9, 15, 8, 10, 12, 17, 8, 13, 7, 12, 11, 13, 7, 11, 8, 10, 12, 15, 8, 10, 31, 8, 11, 9, 8, 16, 10, 12, 8, 10, 12, 18, 9, 12, 14, 11, 8, 16];
+const volumeValues = [
+    18, 12, 8, 10, 7, 9, 6, 14, 8, 9, 10, 7, 11, 8, 7, 25, 17, 11,
+    9, 8, 10, 15, 7, 29, 15, 11, 9, 7, 12, 10, 11, 18, 13, 14, 9, 15,
+    8, 10, 12, 17, 8, 13, 7, 12, 11, 13, 7, 11, 8, 10, 12, 15, 8, 10,
+    31, 8, 11, 9, 8, 16, 10, 12, 8, 10, 12, 18, 9, 12, 14, 11, 8, 16,
+];
 
 const defaultActivities = [
     { id: 1, date: "2018/10/02 10:57:46", detail: "Deposit Japanese Yen", price: "+10,000 JPY", coin: "JPY" },
@@ -93,29 +296,37 @@ const accountItems = [
 ];
 
 const transactionItems = ["Buy & Sell Coin", "Deposit Yen", "Withdraw Yen", "Send Coin", "Receive Coin", "Deposit Coin"];
+
 const activityFilters = ["ALL", "BTC", "ETH", "XRP", "XEM", "JPY"];
+
 const timeFrames = ["1 min", "5 min", "15 min", "1", "4 hr", "1 day"];
 
 function Icon({ name, className = "" }) {
     return <ion-icon name={name} class={className}></ion-icon>;
 }
 
-/* Sidebar */
-function Sidebar({ open, onClose }) {
+/* ===================================
+   Sidebar
+=================================== */
+
+function Sidebar({ open, onClose, desktopCollapsed }) {
     const [transactionsOpen, setTransactionsOpen] = useState(true);
 
     return (
         <>
-            <button type="button" aria-label="Close sidebar" onClick={onClose} className={`sidebar-overlay fixed inset-0 z-40 xl:hidden ${open ? "is-visible" : ""}`}></button>
+            <button type="button" onClick={onClose} aria-label="Close navigation" className={`sidebar-overlay fixed inset-0 z-40 xl:hidden ${open ? "is-visible" : ""}`}></button>
 
-            <aside className={`dashboard-sidebar fixed inset-y-0 left-0 z-50 flex w-[217px] flex-col overflow-y-auto bg-[#1f263e] text-[#aeb6c8] xl:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
-                <div className="flex h-[72px] shrink-0 items-center border-b border-white/[0.055] px-[22px]">
-                    <a href="#dashboard" className="flex items-center gap-[13px]" aria-label="Coinspace home">
-                        <img src={logoMark} alt="Coinspace" className="h-[35px] w-[35px]" />
-                        <span className="text-[15px] font-light tracking-[0.155em] text-[#eef1f8]">COINSPACE</span>
+            <aside className={`dashboard-sidebar fixed inset-y-0 left-0 z-50 flex w-[282px] flex-col overflow-y-auto bg-[#1f263e] text-[#aeb6c8] xl:w-[217px] ${open ? "is-mobile-open" : ""} ${desktopCollapsed ? "is-desktop-collapsed" : ""}`}>
+                <div className="sidebar-brand-row flex h-[72px] shrink-0 items-center border-b border-white/[0.055] px-[17px] xl:px-[22px]">
+                    <a href="#dashboard" className="flex min-w-0 flex-1 items-center gap-[11px]" aria-label="Coinspace home">
+                        <img src={logoMark} alt="Coinspace" className="h-[35px] w-[35px] shrink-0" />
+
+                        <span className="truncate text-[15px] font-light tracking-[0.145em] text-[#eef1f8]">
+                            COINSPACE
+                        </span>
                     </a>
 
-                    <button type="button" onClick={onClose} className="ml-auto flex h-[38px] w-[38px] items-center justify-center rounded-lg text-[25px] text-white xl:hidden" aria-label="Close menu">
+                    <button type="button" onClick={onClose} className="sidebar-close ml-[14px] flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[9px] text-[25px] text-white xl:hidden" aria-label="Close menu">
                         <Icon name="close-outline" />
                     </button>
                 </div>
@@ -128,7 +339,9 @@ function Sidebar({ open, onClose }) {
                     {menuItems.map((item) => (
                         <button key={item.label} type="button" className={`sidebar-link flex h-[42px] w-full items-center border-l-[4px] px-[18px] text-left text-[13px] ${item.active ? "is-active" : ""}`}>
                             <Icon name={item.icon} className="mr-[11px] text-[21px]" />
+
                             <span>{item.label}</span>
+
                             {item.arrow && <Icon name="chevron-forward-outline" className="ml-auto text-[16px] text-[#45bde9]" />}
                         </button>
                     ))}
@@ -139,26 +352,39 @@ function Sidebar({ open, onClose }) {
 
                     <button type="button" onClick={() => setTransactionsOpen((value) => !value)} aria-expanded={transactionsOpen} className="sidebar-link flex h-[42px] w-full items-center border-l-[4px] border-transparent bg-[#303750] px-[18px] text-left text-[13px] text-white">
                         <Icon name="business-outline" className="mr-[11px] text-[21px]" />
+
                         <span>Transactions</span>
-                        <span className="ml-auto mr-[8px] flex h-[16px] min-w-[21px] items-center justify-center rounded-full bg-[#ef6682] px-[5px] text-[8px] text-white">3</span>
+
+                        <span className="ml-auto mr-[8px] flex h-[16px] min-w-[21px] items-center justify-center rounded-full bg-[#ef6682] px-[5px] text-[8px] text-white">
+                            3
+                        </span>
+
                         <Icon name={transactionsOpen ? "chevron-down-outline" : "chevron-forward-outline"} className="text-[15px] text-[#41bde9]" />
                     </button>
 
                     <div className={`grid transition-[grid-template-rows] duration-300 ${transactionsOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
                         <div className="overflow-hidden">
-                            {transactionItems.map((item) => <button key={item} type="button" className="sidebar-sub-link block h-[40px] w-full pl-[59px] pr-[14px] text-left text-[13px]">{item}</button>)}
+                            {transactionItems.map((item) => (
+                                <button key={item} type="button" className="sidebar-sub-link block h-[40px] w-full pl-[59px] pr-[14px] text-left text-[13px]">
+                                    {item}
+                                </button>
+                            ))}
                         </div>
                     </div>
 
                     <button type="button" className="sidebar-link flex h-[42px] w-full items-center px-[22px] text-left text-[13px]">
                         <Icon name="gift-outline" className="mr-[11px] text-[21px]" />
+
                         <span>Rewards</span>
+
                         <Icon name="chevron-forward-outline" className="ml-auto text-[16px] text-[#43bee9]" />
                     </button>
 
                     <button type="button" className="sidebar-link flex h-[42px] w-full items-center px-[22px] text-left text-[13px]">
                         <Icon name="bulb-outline" className="mr-[11px] text-[21px]" />
+
                         <span>Utility Plan</span>
+
                         <Icon name="chevron-forward-outline" className="ml-auto text-[16px] text-[#43bee9]" />
                     </button>
 
@@ -169,6 +395,7 @@ function Sidebar({ open, onClose }) {
                     {accountItems.map((item) => (
                         <button key={item.label} type="button" className="sidebar-link flex h-[42px] w-full items-center px-[22px] text-left text-[13px]">
                             <Icon name={item.icon} className="mr-[11px] text-[21px]" />
+
                             <span>{item.label}</span>
                         </button>
                     ))}
@@ -176,6 +403,7 @@ function Sidebar({ open, onClose }) {
 
                 <button type="button" className="sidebar-link flex h-[50px] shrink-0 items-center border-t border-white/[0.06] px-[22px] text-left text-[13px]">
                     <Icon name="power-outline" className="mr-[10px] text-[22px]" />
+
                     <span>Log Out</span>
                 </button>
             </aside>
@@ -183,11 +411,14 @@ function Sidebar({ open, onClose }) {
     );
 }
 
-/* Header */
-function Header({ onMenu, selectedSymbol, onSelectCoin }) {
-    const [mobileSearch, setMobileSearch] = useState(false);
+/* ===================================
+   Header
+=================================== */
+
+function Header({ onMenu, selectedSymbol, onSelectCoin, desktopCollapsed }) {
     const [query, setQuery] = useState("");
     const [notificationsOpen, setNotificationsOpen] = useState(false);
+
     const notificationRef = useRef(null);
 
     const searchResults = useMemo(() => {
@@ -201,49 +432,67 @@ function Header({ onMenu, selectedSymbol, onSelectCoin }) {
     }, [query]);
 
     useEffect(() => {
-        const handler = (event) => {
+        const handleOutside = (event) => {
             if (notificationRef.current && !notificationRef.current.contains(event.target)) {
                 setNotificationsOpen(false);
             }
         };
 
-        document.addEventListener("mousedown", handler);
+        document.addEventListener("mousedown", handleOutside);
 
-        return () => document.removeEventListener("mousedown", handler);
+        return () => document.removeEventListener("mousedown", handleOutside);
     }, []);
 
     const chooseCoin = (symbol) => {
         onSelectCoin(symbol);
         setQuery("");
-        setMobileSearch(false);
     };
 
     return (
-        <header className="dashboard-header fixed left-0 right-0 top-0 z-30 h-[72px] border-b border-[#edf0f7] bg-white xl:left-[217px]">
-            <div className="flex h-full items-center px-3 sm:px-5 xl:px-[38px]">
+        <header className={`dashboard-header fixed left-0 right-0 top-0 z-30 h-[68px] border-b border-[#edf0f7] bg-white sm:h-[72px] ${desktopCollapsed ? "sidebar-is-collapsed" : ""}`}>
+            <div className="header-container mx-auto flex h-full w-full max-w-[1400px] items-center px-[9px] sm:px-5 xl:px-[30px]">
 
-                {/* Single Hamburger */}
-                <button type="button" onClick={onMenu} className="top-icon-button mr-[5px]" aria-label="Open navigation">
+                {/* Hamburger */}
+                <button type="button" onClick={onMenu} className="header-icon-button shrink-0" aria-label="Toggle navigation">
                     <Icon name="menu-outline" />
                 </button>
 
-                <button type="button" className="top-icon-button mr-[13px] hidden sm:flex" aria-label="Applications">
+                {/* Mobile logo */}
+                <a href="#dashboard" className="mobile-header-brand ml-[3px] flex min-w-0 items-center sm:hidden" aria-label="Coinspace home">
+                    <img src={logoMark} alt="Coinspace" className="h-[30px] w-[30px] shrink-0" />
+
+                    <span className="mobile-header-brand-name truncate text-[11px] font-medium tracking-[0.105em] text-[#3a4459]">
+                        COINSPACE
+                    </span>
+                </a>
+
+                {/* Desktop cube */}
+                <button type="button" className="cube-btn header-icon-button ml-[4px] mr-[12px] hidden sm:flex" aria-label="Applications">
                     <Icon name="cube-outline" />
                 </button>
 
-                <div className={`${mobileSearch ? "flex absolute left-[10px] right-[10px] top-[76px] z-40" : "hidden"} search-shell sm:relative sm:left-auto sm:right-auto sm:top-auto sm:flex sm:w-[260px]`}>
+                {/* Desktop search */}
+                <div className="relative hidden w-[260px] sm:flex">
                     <Icon name="search-outline" className="absolute left-[13px] top-1/2 z-10 -translate-y-1/2 text-[21px] text-[#50bdeb]" />
 
-                    <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={`Search ${selectedSymbol} or cryptocurrency...`} aria-label="Search cryptocurrency" className="dashboard-search h-[36px] w-full rounded-full border-0 bg-[#f7f9fc] pl-[41px] pr-[15px] text-[11px] outline-none" />
+                    <input
+                        type="search"
+                        value={query}
+                        onChange={(event) => setQuery(event.target.value)}
+                        placeholder="Type any cryptocurrency..."
+                        aria-label="Search cryptocurrency"
+                        className="dashboard-search h-[36px] w-full rounded-full border-0 bg-[#f7f9fc] pl-[41px] pr-[15px] text-[11px] outline-none"
+                    />
 
                     {searchResults.length > 0 && (
-                        <div className="search-results absolute left-0 right-0 top-[44px] overflow-hidden rounded-[10px] border border-[#e3e8f2] bg-white">
+                        <div className="search-results absolute left-0 right-0 top-[44px] overflow-hidden rounded-[9px] border border-[#e2e7f0] bg-white">
                             {searchResults.map((coin) => (
-                                <button key={coin.symbol} type="button" onClick={() => chooseCoin(coin.symbol)} className="flex w-full items-center px-[12px] py-[10px] text-left transition-colors hover:bg-[#f7f9fe]">
-                                    <img src={coin.icon} alt={`${coin.name} logo`} className="mr-[10px] h-[24px] w-[24px]" />
+                                <button key={coin.symbol} type="button" onClick={() => chooseCoin(coin.symbol)} className="flex w-full items-center px-[12px] py-[10px] text-left hover:bg-[#f8faff]">
+                                    <img src={coin.icon} alt={`${coin.name} logo`} className="mr-[9px] h-[24px] w-[24px]" />
 
                                     <span>
-                                        <strong className="block text-[11px] font-medium text-[#353e50]">{coin.symbol}</strong>
+                                        <strong className="block text-[11px] font-medium text-[#364055]">{coin.symbol}</strong>
+
                                         <span className="text-[9px] text-[#aeb5c1]">{coin.name}</span>
                                     </span>
 
@@ -254,53 +503,65 @@ function Header({ onMenu, selectedSymbol, onSelectCoin }) {
                     )}
                 </div>
 
-                <div className="ml-auto flex items-center gap-[4px] sm:gap-[7px]">
-                    <button type="button" onClick={() => setMobileSearch((value) => !value)} className="top-icon-button sm:hidden" aria-label="Search">
-                        <Icon name={mobileSearch ? "close-outline" : "search-outline"} />
+                {/* Header right controls */}
+                <div className="header-right-actions ml-auto flex items-center">
+
+                    <button type="button" className="header-profile-button" aria-label="Profile">
+                        <img src={avatarImage} alt="User profile" className="rounded-full" />
                     </button>
 
-                    <button type="button" className="profile-button hidden sm:flex" aria-label="Profile">
-                        <img src={avatarImage} alt="User profile" className="h-[38px] w-[38px] rounded-full" />
-                    </button>
-
-                    <button type="button" className="top-icon-button hidden sm:flex" aria-label="Settings">
+                    <button type="button" className="header-icon-button" aria-label="Settings">
                         <Icon name="settings-outline" />
                     </button>
-
+                    
                     <div ref={notificationRef} className="relative">
-                        <button type="button" onClick={() => setNotificationsOpen((value) => !value)} className="top-icon-button relative" aria-label="Notifications">
+                        <button
+                            type="button"
+                            onClick={() => setNotificationsOpen((value) => !value)}
+                            className={`header-notification-button ${notificationsOpen ? "is-active" : ""}`}
+                            aria-label="Notifications"
+                            aria-expanded={notificationsOpen}
+                        >
                             <Icon name="megaphone-outline" />
 
-                            <span className="absolute right-[2px] top-[1px] flex h-[19px] min-w-[19px] items-center justify-center rounded-full bg-[#ef6682] px-[4px] text-[9px] font-medium text-white">3</span>
+                            <span className="notification-count absolute flex items-center justify-center rounded-full bg-[#ef6682] text-white">
+                                3
+                            </span>
                         </button>
 
                         {notificationsOpen && (
-                            <div className="notification-panel absolute right-[-45px] top-[48px] w-[285px] overflow-hidden rounded-[10px] border border-[#e2e7f1] bg-white sm:right-0">
+                            <div className="notification-panel absolute right-[-42px] top-[48px] w-[285px] overflow-hidden rounded-[10px] border border-[#e1e6ef] bg-white sm:right-0">
                                 <div className="flex items-center border-b border-[#edf0f6] px-[14px] py-[12px]">
                                     <strong className="text-[12px] font-semibold text-[#30384a]">Notifications</strong>
 
-                                    <button type="button" className="ml-auto text-[9px] text-[#5669ed]">Mark all read</button>
+                                    <button type="button" className="ml-auto text-[9px] text-[#5669ed]">
+                                        Mark all read
+                                    </button>
                                 </div>
 
                                 <button type="button" className="block w-full px-[14px] py-[11px] text-left hover:bg-[#fafbff]">
                                     <span className="block text-[11px] text-[#465064]">Bitcoin price alert</span>
+
                                     <span className="mt-[3px] block text-[9px] text-[#aeb5bf]">BTC dropped below ¥ 722,000</span>
                                 </button>
 
                                 <button type="button" className="block w-full border-t border-[#f0f2f7] px-[14px] py-[11px] text-left hover:bg-[#fafbff]">
                                     <span className="block text-[11px] text-[#465064]">Deposit completed</span>
+
                                     <span className="mt-[3px] block text-[9px] text-[#aeb5bf]">Your Ethereum deposit has been confirmed.</span>
                                 </button>
 
                                 <button type="button" className="block w-full border-t border-[#f0f2f7] px-[14px] py-[11px] text-left hover:bg-[#fafbff]">
                                     <span className="block text-[11px] text-[#465064]">Account security</span>
+
                                     <span className="mt-[3px] block text-[9px] text-[#aeb5bf]">A new sign-in was detected.</span>
                                 </button>
                             </div>
                         )}
                     </div>
 
-                    <button type="button" className="language-button" aria-label="Language English">
+                    {/* Desktop language only */}
+                    <button type="button" className="language-button hidden sm:flex" aria-label="English language">
                         <img src={usFlag} alt="United States flag" className="h-[27px] w-[27px]" />
                     </button>
                 </div>
@@ -309,15 +570,22 @@ function Header({ onMenu, selectedSymbol, onSelectCoin }) {
     );
 }
 
-/* Toolbar */
+/* ===================================
+   Toolbar
+=================================== */
+
 function DashboardToolbar() {
     return (
         <div className="mb-[10px] flex min-h-[32px] items-center justify-between">
             <div className="flex items-center gap-[5px] text-[11px] text-[#596377]">
                 <span className="triangle-dark"></span>
+
                 <span>Welcome</span>
+
                 <span className="text-[#b8bdc8]">/</span>
+
                 <strong className="font-semibold text-[#1749d4]">Dashboard</strong>
+
                 <span className="triangle-blue"></span>
             </div>
 
@@ -338,10 +606,14 @@ function DashboardToolbar() {
     );
 }
 
-/* Sparkline */
+/* ===================================
+   Sparkline
+=================================== */
+
 function Sparkline({ symbol, values, color }) {
     const width = 260;
     const height = 58;
+
     const min = Math.min(...values);
     const max = Math.max(...values);
     const range = Math.max(max - min, 1);
@@ -358,6 +630,7 @@ function Sparkline({ symbol, values, color }) {
             <defs>
                 <linearGradient id={`spark-${symbol}`} x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor={color} stopOpacity=".18" />
+
                     <stop offset="100%" stopColor={color} stopOpacity=".01" />
                 </linearGradient>
             </defs>
@@ -369,9 +642,13 @@ function Sparkline({ symbol, values, color }) {
     );
 }
 
-/* Cryptocurrency Overview */
+/* ===================================
+   Coin Overview
+=================================== */
+
 function CoinOverview({ selectedSymbol, onSelectCoin }) {
     const sliderRef = useRef(null);
+
     const [activeSlide, setActiveSlide] = useState(0);
 
     const goToSlide = (index) => {
@@ -389,47 +666,43 @@ function CoinOverview({ selectedSymbol, onSelectCoin }) {
         setActiveSlide(index);
     };
 
-    const moveSlide = (direction) => {
-        const nextIndex = Math.max(0, Math.min(overviewSymbols.length - 1, activeSlide + direction));
-
-        goToSlide(nextIndex);
-    };
-
     const handleScroll = () => {
         const slider = sliderRef.current;
 
         if (!slider || window.innerWidth >= 640) return;
 
         const cards = Array.from(slider.children);
-        const sliderCenter = slider.scrollLeft + slider.clientWidth / 2;
+        const center = slider.scrollLeft + slider.clientWidth / 2;
 
-        let closestIndex = 0;
-        let closestDistance = Infinity;
+        let selected = 0;
+        let nearest = Infinity;
 
         cards.forEach((card, index) => {
             const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-            const distance = Math.abs(cardCenter - sliderCenter);
+            const distance = Math.abs(cardCenter - center);
 
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestIndex = index;
+            if (distance < nearest) {
+                nearest = distance;
+                selected = index;
             }
         });
 
-        setActiveSlide(closestIndex);
+        setActiveSlide(selected);
     };
 
     return (
         <section className="coin-overview-section mb-[17px]" aria-label="Cryptocurrency overview">
             <div className="mb-[9px] flex items-center justify-between sm:hidden">
-                <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-[#99a3b5]">Market Overview</span>
+                <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-[#99a3b5]">
+                    Market Overview
+                </span>
 
-                <div className="flex items-center gap-[5px]">
-                    <button type="button" onClick={() => moveSlide(-1)} disabled={activeSlide === 0} className="mobile-slider-arrow" aria-label="Previous cryptocurrency">
+                <div className="flex gap-[5px]">
+                    <button type="button" onClick={() => goToSlide(Math.max(0, activeSlide - 1))} disabled={activeSlide === 0} className="mobile-slider-arrow" aria-label="Previous cryptocurrency">
                         <Icon name="chevron-back-outline" />
                     </button>
 
-                    <button type="button" onClick={() => moveSlide(1)} disabled={activeSlide === overviewSymbols.length - 1} className="mobile-slider-arrow" aria-label="Next cryptocurrency">
+                    <button type="button" onClick={() => goToSlide(Math.min(overviewSymbols.length - 1, activeSlide + 1))} disabled={activeSlide === overviewSymbols.length - 1} className="mobile-slider-arrow" aria-label="Next cryptocurrency">
                         <Icon name="chevron-forward-outline" />
                     </button>
                 </div>
@@ -438,15 +711,15 @@ function CoinOverview({ selectedSymbol, onSelectCoin }) {
             <div ref={sliderRef} onScroll={handleScroll} className="coin-overview-track">
                 {overviewSymbols.map((symbol) => {
                     const coin = coinData[symbol];
-                    const selected = selectedSymbol === symbol;
 
                     return (
-                        <button key={symbol} type="button" onClick={() => onSelectCoin(symbol)} className={`coin-card group relative h-[108px] overflow-hidden rounded-[11px] border bg-white px-[12px] pb-[3px] pt-[10px] text-left ${selected ? "is-selected" : ""}`}>
+                        <button key={symbol} type="button" onClick={() => onSelectCoin(symbol)} className={`coin-card relative h-[108px] overflow-hidden rounded-[11px] border bg-white px-[12px] pb-[3px] pt-[10px] text-left ${selectedSymbol === symbol ? "is-selected" : ""}`}>
                             <div className="flex items-start">
                                 <img src={coin.icon} alt={`${coin.name} logo`} className="mr-[10px] h-[25px] w-[25px] shrink-0" />
 
                                 <div>
                                     <h2 className="text-[15px] font-normal leading-[17px] text-[#434b59]">{coin.symbol}</h2>
+
                                     <p className="mt-[2px] text-[10px] font-light text-[#b8bbc2]">{coin.name}</p>
                                 </div>
 
@@ -455,6 +728,7 @@ function CoinOverview({ selectedSymbol, onSelectCoin }) {
 
                                     <span className={`mt-[7px] flex items-center justify-end gap-[2px] whitespace-nowrap text-[10px] ${coin.trend === "up" ? "text-[#14c1b2]" : "text-[#ff5579]"}`}>
                                         {coin.change}
+
                                         <Icon name={coin.trend === "up" ? "arrow-up-outline" : "arrow-down-outline"} className="text-[13px]" />
                                     </span>
                                 </div>
@@ -468,7 +742,7 @@ function CoinOverview({ selectedSymbol, onSelectCoin }) {
                 })}
             </div>
 
-            <div className="mt-[8px] flex items-center justify-center gap-[5px] sm:hidden">
+            <div className="mt-[8px] flex justify-center gap-[5px] sm:hidden">
                 {overviewSymbols.map((symbol, index) => (
                     <button key={symbol} type="button" onClick={() => goToSlide(index)} className={`slider-dot ${activeSlide === index ? "is-active" : ""}`} aria-label={`Show ${symbol}`}></button>
                 ))}
@@ -477,7 +751,10 @@ function CoinOverview({ selectedSymbol, onSelectCoin }) {
     );
 }
 
-/* Candlestick Chart */
+/* ===================================
+   Candlestick Chart
+=================================== */
+
 function CandlestickChart({ symbol, frame }) {
     const seed = symbol.charCodeAt(0) + symbol.charCodeAt(symbol.length - 1) + frame.length * 5;
 
@@ -488,7 +765,9 @@ function CandlestickChart({ symbol, frame }) {
     const graphTop = 14;
     const graphBottom = 233;
     const graphHeight = graphBottom - graphTop;
+
     const step = (graphRight - graphLeft) / closeValues.length;
+
     const candleWidth = Math.max(step * 0.48, 3.6);
 
     const transformed = closeValues.map((value, index) => value + ((seed % 7) - 3) * 90 + Math.sin((index + seed) * 0.21) * 95);
@@ -497,7 +776,7 @@ function CandlestickChart({ symbol, frame }) {
 
     return (
         <div className="chart-shell relative w-full overflow-hidden">
-            <svg viewBox="0 0 850 322" preserveAspectRatio="none" className="h-full w-full min-w-[625px]" role="img" aria-label={`${symbol} price chart`}>
+            <svg viewBox="0 0 850 322" preserveAspectRatio="none" className="h-full w-full min-w-[600px]" role="img" aria-label={`${symbol} price chart`}>
                 {[726000, 725000, 724000, 723000, 722000, 721000, 720000, 719000].map((price) => {
                     const y = priceToY(price);
 
@@ -505,16 +784,21 @@ function CandlestickChart({ symbol, frame }) {
                         <g key={price}>
                             <line x1="0" y1={y} x2="808" y2={y} stroke="#eef1f8" strokeWidth=".8" />
 
-                            <text x="847" y={y + 3} textAnchor="end" fill="#b7bdc7" fontSize="8.5">{price}</text>
+                            <text x="847" y={y + 3} textAnchor="end" fill="#b7bdc7" fontSize="8.5">
+                                {price}
+                            </text>
                         </g>
                     );
                 })}
 
                 {transformed.map((close, index) => {
                     const open = index === 0 ? close - 220 : transformed[index - 1];
+
                     const volatility = 240 + (index % 5) * 105;
+
                     const high = Math.min(Math.max(open, close) + volatility, maxPrice);
                     const low = Math.max(Math.min(open, close) - volatility * 0.85, minPrice);
+
                     const x = graphLeft + index * step + step / 2;
 
                     const openY = priceToY(open);
@@ -523,13 +807,15 @@ function CandlestickChart({ symbol, frame }) {
                     const lowY = priceToY(low);
 
                     const rising = close >= open;
+
                     const color = rising ? "#38d2eb" : "#9c7efe";
 
                     const bodyTop = Math.min(openY, closeY);
+
                     const bodyHeight = Math.max(Math.abs(closeY - openY), 3);
 
                     return (
-                        <g key={index} className="candle-item" style={{ animationDelay: `${index * 5}ms` }}>
+                        <g key={index} className="candle-item">
                             <line x1={x} y1={highY} x2={x} y2={lowY} stroke={color} strokeWidth="1.7" strokeLinecap="round" />
 
                             <rect x={x - candleWidth / 2} y={bodyTop} width={candleWidth} height={bodyHeight} rx=".8" fill={color} />
@@ -547,35 +833,24 @@ function CandlestickChart({ symbol, frame }) {
                 <line x1="0" y1="283" x2="808" y2="283" stroke="#eef1f7" strokeWidth=".8" />
 
                 {["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00"].map((time, index) => (
-                    <text key={time} x={index * 98.6} y="300" fill="#b7bdc7" fontSize="9">{time}</text>
+                    <text key={time} x={index * 98.6} y="300" fill="#b7bdc7" fontSize="9">
+                        {time}
+                    </text>
                 ))}
             </svg>
-
-            <div className="absolute bottom-[1px] left-0 right-[28px] flex h-[14px] items-center rounded-[2px] bg-[#edf2fc]">
-                <button type="button" className="flex h-full w-[18px] items-center justify-center text-[10px] text-[#72afe8]" aria-label="Previous chart range">
-                    <Icon name="chevron-back-outline" />
-                </button>
-
-                <div className="relative h-full flex-1">
-                    <span className="absolute right-[9%] top-0 h-full w-[4.1%] bg-[#d9e1f4]"></span>
-                </div>
-
-                <button type="button" className="flex h-full w-[18px] items-center justify-center text-[10px] text-[#72afe8]" aria-label="Next chart range">
-                    <Icon name="chevron-forward-outline" />
-                </button>
-            </div>
         </div>
     );
 }
 
-/* Buy Modal */
+/* ===================================
+   Buy Modal
+=================================== */
+
 function BuyModal({ coin, open, onClose, onSuccess }) {
     const [amount, setAmount] = useState("");
 
     useEffect(() => {
-        if (!open) {
-            setAmount("");
-        }
+        if (!open) setAmount("");
     }, [open]);
 
     if (!open) return null;
@@ -586,12 +861,13 @@ function BuyModal({ coin, open, onClose, onSuccess }) {
         if (!amount || Number(amount) <= 0) return;
 
         onSuccess(Number(amount));
+
         onClose();
     };
 
     return (
         <div className="modal-overlay fixed inset-0 z-[100] flex items-center justify-center px-4">
-            <button type="button" className="absolute inset-0" onClick={onClose} aria-label="Close buy dialog"></button>
+            <button type="button" className="absolute inset-0" onClick={onClose} aria-label="Close dialog"></button>
 
             <form onSubmit={submit} className="modal-card relative z-10 w-full max-w-[390px] rounded-[14px] bg-white p-[22px]">
                 <div className="flex items-center">
@@ -599,10 +875,11 @@ function BuyModal({ coin, open, onClose, onSuccess }) {
 
                     <div>
                         <strong className="block text-[15px] font-semibold text-[#273147]">Buy {coin.name}</strong>
+
                         <span className="text-[10px] text-[#aab2bf]">{coin.displayPrice}</span>
                     </div>
 
-                    <button type="button" onClick={onClose} className="ml-auto flex h-[36px] w-[36px] items-center justify-center rounded-lg text-[23px] text-[#7d8798]" aria-label="Close">
+                    <button type="button" onClick={onClose} className="ml-auto flex h-[38px] w-[38px] items-center justify-center rounded-[8px] bg-[#f5f7fb] text-[23px] text-[#7d8798]" aria-label="Close">
                         <Icon name="close-outline" />
                     </button>
                 </div>
@@ -625,7 +902,7 @@ function BuyModal({ coin, open, onClose, onSuccess }) {
                     </strong>
                 </div>
 
-                <button type="submit" className="mt-[18px] h-[43px] w-full rounded-[6px] bg-gradient-to-r from-[#075bfa] to-[#7557ec] text-[12px] font-medium text-white shadow-[0_7px_18px_rgba(75,84,225,.2)]">
+                <button type="submit" className="mt-[18px] h-[43px] w-full rounded-[6px] bg-gradient-to-r from-[#075bfa] to-[#7557ec] text-[12px] font-medium text-white">
                     Confirm Purchase
                 </button>
             </form>
@@ -633,7 +910,10 @@ function BuyModal({ coin, open, onClose, onSuccess }) {
     );
 }
 
-/* Trading Panel */
+/* ===================================
+   Trading Panel
+=================================== */
+
 function TradingPanel({ selectedSymbol, onActivityAdd }) {
     const [frame, setFrame] = useState("1");
     const [buyOpen, setBuyOpen] = useState(false);
@@ -655,21 +935,23 @@ function TradingPanel({ selectedSymbol, onActivityAdd }) {
         <>
             <div className="min-w-0 xl:border-r xl:border-[#e1e6f3]">
                 <div className="flex h-[48px] items-center border-b border-[#e1e6f3] px-[15px] sm:px-[23px]">
-                    <img src={coin.icon} alt={`${coin.name} logo`} className="mr-[8px] h-[21px] w-[21px]" />
+                    <img src={coin.icon} alt={`${coin.name} logo`} className="mr-[8px] h-[22px] w-[22px]" />
 
                     <strong className="text-[15px] font-semibold text-[#202739]">{coin.symbol}</strong>
 
-                    <span className="ml-[9px] text-[10px] font-light text-[#b8bdc6]">/JPY</span>
+                    <span className="ml-[9px] text-[10px] text-[#b8bdc6]">/JPY</span>
 
                     <Icon name="chevron-down-outline" className="ml-[5px] text-[13px] text-[#47bae6]" />
 
-                    <button type="button" onClick={() => setBuyOpen(true)} className="buy-button ml-auto h-[28px] min-w-[66px] rounded-[4px] bg-gradient-to-r from-[#075bfa] to-[#7659eb] px-[11px] text-[10px] font-medium text-white">
+                    <button type="button" onClick={() => setBuyOpen(true)} className="buy-button ml-auto h-[29px] min-w-[68px] rounded-[4px] bg-gradient-to-r from-[#075bfa] to-[#7659eb] px-[11px] text-[10px] font-medium text-white">
                         BUY
                     </button>
                 </div>
 
-                <div className="trading-stats flex min-h-[49px] flex-wrap items-center gap-x-[20px] gap-y-[6px] border-b border-[#e8ebf4] px-[15px] py-[7px] sm:px-[23px]">
-                    <strong className="text-[19px] font-normal leading-none text-[#253149]">{coin.displayPrice.replace("¥ ", "")}</strong>
+                <div className="flex min-h-[49px] flex-wrap items-center gap-x-[20px] gap-y-[6px] border-b border-[#e8ebf4] px-[15px] py-[7px] sm:px-[23px]">
+                    <strong className="text-[19px] font-normal leading-none text-[#253149]">
+                        {coin.displayPrice.replace("¥ ", "")}
+                    </strong>
 
                     <span className={`flex items-center gap-[3px] text-[10px] ${coin.trend === "up" ? "text-[#12bcae]" : "text-[#ff5278]"}`}>
                         {coin.change}
@@ -691,7 +973,7 @@ function TradingPanel({ selectedSymbol, onActivityAdd }) {
                     <button type="button" onClick={() => setAlertActive((value) => !value)} className={`price-alert-button ml-auto flex items-center gap-[7px] text-[10px] ${alertActive ? "is-active" : ""}`}>
                         <span className="hidden sm:inline">{alertActive ? "Alert On" : "Price Alert"}</span>
 
-                        <span className="flex h-[24px] w-[24px] items-center justify-center rounded-full border text-[13px]">
+                        <span className="flex h-[25px] w-[25px] items-center justify-center rounded-full border text-[13px]">
                             <Icon name={alertActive ? "notifications" : "notifications-outline"} />
                         </span>
                     </button>
@@ -707,7 +989,7 @@ function TradingPanel({ selectedSymbol, onActivityAdd }) {
                     ))}
                 </div>
 
-                <div className="chart-wrapper bg-[#fafbff] px-[13px] pb-[9px] pt-[2px] sm:px-[23px]">
+                <div className="chart-wrapper bg-[#fafbff] px-[13px] pb-[8px] pt-[2px] sm:px-[23px]">
                     <CandlestickChart symbol={selectedSymbol} frame={frame} />
                 </div>
             </div>
@@ -717,7 +999,10 @@ function TradingPanel({ selectedSymbol, onActivityAdd }) {
     );
 }
 
-/* Market */
+/* ===================================
+   Market Cap
+=================================== */
+
 function MarketCap({ selectedSymbol, onSelectCoin }) {
     const [expanded, setExpanded] = useState(false);
 
@@ -726,47 +1011,43 @@ function MarketCap({ selectedSymbol, onSelectCoin }) {
     const visible = expanded ? symbols : symbols.slice(0, 9);
 
     return (
-        <aside className="bg-white" aria-label="Cryptocurrency market cap">
+        <aside className="bg-white">
             <div className="flex h-[48px] items-center border-b border-[#e1e6f3] px-[18px]">
                 <span className="triangle-blue-large mr-[7px]"></span>
 
-                <h2 className="text-[15px] font-semibold leading-[16px] text-[#202739]">Market Cap</h2>
+                <h2 className="text-[15px] font-semibold text-[#202739]">Market Cap</h2>
 
-                <button type="button" className="ml-auto flex h-[32px] w-[32px] items-center justify-center rounded-md text-[18px] text-[#9ea4af]" aria-label="Sort market">
+                <button type="button" className="ml-auto flex h-[32px] w-[32px] items-center justify-center text-[18px] text-[#9ea4af]" aria-label="Sort market">
                     <Icon name="swap-vertical-outline" />
                 </button>
             </div>
 
-            <div className="market-scroll">
-                {visible.map((symbol) => {
-                    const coin = coinData[symbol];
+            {visible.map((symbol) => {
+                const coin = coinData[symbol];
 
-                    return (
-                        <button key={symbol} type="button" onClick={() => onSelectCoin(symbol)} className={`market-row flex h-[47px] w-full items-center border-b border-[#e8ecf4] px-[18px] text-left ${selectedSymbol === symbol ? "is-active" : ""}`}>
-                            <img src={coin.icon} alt={`${coin.name} logo`} className="mr-[9px] h-[20px] w-[20px] shrink-0" />
+                return (
+                    <button key={symbol} type="button" onClick={() => onSelectCoin(symbol)} className={`market-row flex h-[47px] w-full items-center border-b border-[#e8ecf4] px-[18px] text-left ${selectedSymbol === symbol ? "is-active" : ""}`}>
+                        <img src={coin.icon} alt={`${coin.name} logo`} className="mr-[9px] h-[20px] w-[20px]" />
 
-                            <span className="text-[10.5px] font-medium text-[#4e5769]">{coin.symbol}</span>
+                        <span className="text-[10.5px] font-medium text-[#4e5769]">{coin.symbol}</span>
 
-                            <span className="ml-auto whitespace-nowrap text-[10px] text-[#273148]">{coin.displayPrice}</span>
+                        <span className="ml-auto whitespace-nowrap text-[10px] text-[#273148]">{coin.displayPrice}</span>
 
-                            <span className={`ml-[10px] flex min-w-[57px] items-center justify-end gap-[2px] whitespace-nowrap text-[10px] ${coin.trend === "up" ? "text-[#13c0b1]" : "text-[#ff5579]"}`}>
-                                {coin.change}
+                        <span className={`ml-[10px] flex min-w-[57px] items-center justify-end gap-[2px] whitespace-nowrap text-[10px] ${coin.trend === "up" ? "text-[#13c0b1]" : "text-[#ff5579]"}`}>
+                            {coin.change}
 
-                                <Icon name={coin.trend === "up" ? "arrow-up-outline" : "arrow-down-outline"} className="text-[13px]" />
-                            </span>
-                        </button>
-                    );
-                })}
-            </div>
+                            <Icon name={coin.trend === "up" ? "arrow-up-outline" : "arrow-down-outline"} className="text-[13px]" />
+                        </span>
+                    </button>
+                );
+            })}
 
             <div className="flex h-[35px] items-center justify-between px-[18px]">
-                <button type="button" onClick={() => setExpanded((value) => !value)} className="text-[9px] font-medium text-[#7b8494] transition-colors hover:text-[#5264ec]">
+                <button type="button" onClick={() => setExpanded((value) => !value)} className="text-[9px] font-medium text-[#7b8494] hover:text-[#5264ec]">
                     {expanded ? "Show less" : "View more"}
                 </button>
 
-                <button type="button" aria-label="Market information" className="flex h-[28px] w-[28px] items-center justify-center text-[18px] text-[#727c8d]">
-                    <Icon name="information-circle-outline" />
-                </button>
+                <Icon name="information-circle-outline" className="text-[18px] text-[#727c8d]" />
             </div>
         </aside>
     );
@@ -784,7 +1065,10 @@ function TradingArea({ selectedSymbol, onSelectCoin, onActivityAdd }) {
     );
 }
 
-/* Latest Activities */
+/* ===================================
+   Latest Activities
+=================================== */
+
 function LatestActivities({ activitiesData }) {
     const [filter, setFilter] = useState("ALL");
     const [showAll, setShowAll] = useState(false);
@@ -824,28 +1108,25 @@ function LatestActivities({ activitiesData }) {
                     <thead>
                         <tr className="h-[35px] border-b border-[#e7ebf3] text-[11px] text-[#343d51]">
                             <th className="w-[32%] px-[18px] font-normal">Date</th>
+
                             <th className="px-[18px] font-normal">Detail</th>
+
                             <th className="px-[18px] text-right font-normal">Price</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        {filtered.length ? filtered.map((activity) => (
+                        {filtered.map((activity) => (
                             <tr key={activity.id} className="activity-row h-[46px] border-b border-[#edf0f6] text-[11px] text-[#465067]">
                                 <td className="whitespace-nowrap px-[18px]">{activity.date}</td>
+
                                 <td className="px-[18px]">{activity.detail}</td>
 
                                 <td className={`whitespace-nowrap px-[18px] text-right ${activity.price.trim().startsWith("-") ? "text-[#815fff]" : "text-[#5669ff]"}`}>
                                     {activity.price}
                                 </td>
                             </tr>
-                        )) : (
-                            <tr>
-                                <td colSpan="3" className="h-[110px] text-center text-[11px] text-[#adb4bf]">
-                                    No activity available for {filter}.
-                                </td>
-                            </tr>
-                        )}
+                        ))}
                     </tbody>
                 </table>
             </div>
@@ -853,7 +1134,10 @@ function LatestActivities({ activitiesData }) {
     );
 }
 
-/* News */
+/* ===================================
+   Newsfeed
+=================================== */
+
 function CryptoNewsfeed() {
     const [subscribed, setSubscribed] = useState(false);
     const [expanded, setExpanded] = useState(false);
@@ -875,15 +1159,23 @@ function CryptoNewsfeed() {
             <div className="space-y-[14px]">
                 {visibleNews.map((item) => (
                     <article key={item.id} className="news-card relative min-h-[118px] overflow-hidden rounded-[10px] border border-[#dfe5f9] p-[12px] pr-[105px]">
-                        <p className="text-[10px] text-[#414a5e]">{item.date}&nbsp;&nbsp; {item.time}</p>
+                        <p className="text-[10px] text-[#414a5e]">
+                            {item.date}&nbsp;&nbsp; {item.time}
+                        </p>
 
-                        <h3 className="mt-[14px] max-w-[420px] text-[12px] font-normal leading-[16px] text-[#4e5767]">{item.title}</h3>
+                        <h3 className="mt-[14px] max-w-[420px] text-[12px] font-normal leading-[16px] text-[#4e5767]">
+                            {item.title}
+                        </h3>
 
-                        <p className="mt-[6px] hidden max-w-[430px] text-[10px] font-light leading-[15px] text-[#c0c4cb] sm:block">{item.description}</p>
+                        <p className="mt-[6px] hidden max-w-[430px] text-[10px] font-light leading-[15px] text-[#c0c4cb] sm:block">
+                            {item.description}
+                        </p>
 
                         <img src={item.corner} alt="" className="pointer-events-none absolute bottom-0 right-0 h-full w-[120px] object-cover object-right-bottom" />
 
-                        <span className="absolute bottom-[8px] right-[10px] text-[10px] text-white">{item.category}</span>
+                        <span className="absolute bottom-[8px] right-[10px] text-[10px] text-white">
+                            {item.category}
+                        </span>
                     </article>
                 ))}
             </div>
@@ -895,36 +1187,116 @@ function CryptoNewsfeed() {
     );
 }
 
-/* Support Chat */
+/* ===================================
+   Chat Response Engine
+=================================== */
+
+function getChatResponse(message) {
+    const original = message.trim();
+
+    const text = original.toLowerCase();
+
+    if (/\b(hi|hello|hey|hii|hola)\b/.test(text)) {
+        return "Hello! Welcome to Coinspace support. How can I help you today?";
+    }
+
+    if (text.includes("btc") || text.includes("bitcoin")) {
+        return `Bitcoin is currently shown at ${coinData.BTC.displayPrice} with a ${coinData.BTC.change} demo market movement.`;
+    }
+
+    if (text.includes("eth") || text.includes("ethereum")) {
+        return `Ethereum is currently shown at ${coinData.ETH.displayPrice}. Select ETH from Market Cap to update the trading panel.`;
+    }
+
+    if (text.includes("xrp") || text.includes("ripple")) {
+        return `Ripple is currently shown at ${coinData.XRP.displayPrice} with a ${coinData.XRP.change} demo movement.`;
+    }
+
+    if (text.includes("price") || text.includes("market")) {
+        return "You can check prices from the top market cards or Market Cap panel. Selecting a cryptocurrency updates the main trading area.";
+    }
+
+    if (text.includes("buy") || text.includes("purchase")) {
+        return "Select a cryptocurrency, click BUY, enter an amount and confirm. The demo purchase will automatically appear in Latest Activities.";
+    }
+
+    if (text.includes("deposit")) {
+        return "Open Transactions from the sidebar and choose Deposit Yen or Deposit Coin.";
+    }
+
+    if (text.includes("withdraw")) {
+        return "Open Transactions and choose Withdraw Yen. A real application should verify the balance and destination before completing the withdrawal.";
+    }
+
+    if (text.includes("wallet")) {
+        return "My Wallet is available under Quick Access. It can contain balances, wallet addresses and transfer history.";
+    }
+
+    if (text.includes("fee")) {
+        return "Fees vary by transaction and cryptocurrency. Latest Activities currently contains example fee information.";
+    }
+
+    if (text.includes("security") || text.includes("password") || text.includes("login")) {
+        return "For security, use a strong password, enable two-factor authentication and never share your password, private key or recovery phrase.";
+    }
+
+    if (text.includes("help") || text.includes("support")) {
+        return "I can help with prices, buying, wallets, deposits, withdrawals, fees and dashboard navigation.";
+    }
+
+    if (text.includes("thanks") || text.includes("thank")) {
+        return "You’re welcome! Send another message anytime if you need help.";
+    }
+
+    return `Thanks for your message: “${original.length > 65 ? `${original.slice(0, 65)}…` : original}”. Tell me a little more about what you need and I’ll guide you through the relevant Coinspace feature.`;
+}
+
+/* ===================================
+   Support Chat
+=================================== */
+
 function SupportChat() {
     const [open, setOpen] = useState(false);
+
     const [input, setInput] = useState("");
+
+    const [replying, setReplying] = useState(false);
 
     const [messages, setMessages] = useState([
         {
             id: 1,
             type: "agent",
-            text: "Hello! How can we help you today?",
+            text: "Hello! I’m Coinspace support. How can I help you today?",
         },
     ]);
+
+    const messagesRef = useRef(null);
+
+    useEffect(() => {
+        if (!messagesRef.current) return;
+
+        messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }, [messages, replying]);
 
     const sendMessage = (event) => {
         event.preventDefault();
 
-        if (!input.trim()) return;
+        const message = input.trim();
 
-        const text = input.trim();
+        if (!message || replying) return;
 
         setMessages((current) => [
             ...current,
             {
                 id: Date.now(),
                 type: "user",
-                text,
+                text: message,
             },
         ]);
 
         setInput("");
+
+        setReplying(true);
 
         window.setTimeout(() => {
             setMessages((current) => [
@@ -932,51 +1304,99 @@ function SupportChat() {
                 {
                     id: Date.now() + 1,
                     type: "agent",
-                    text: "Thanks! A support agent will review your message shortly.",
+                    text: getChatResponse(message),
                 },
             ]);
-        }, 500);
+
+            setReplying(false);
+        }, 650);
     };
 
     return (
-        <div className="fixed bottom-[16px] right-[16px] z-40 sm:bottom-[20px] sm:right-[20px]">
-            <div className={`chat-panel absolute bottom-[57px] right-0 w-[260px] origin-bottom-right rounded-[10px] border border-[#dfe5f2] bg-white p-[15px] ${open ? "is-open" : ""}`}>
-                <strong className="text-[12px] font-semibold text-[#263047]">Coinspace Support</strong>
+        <div className="support-root fixed bottom-[16px] right-[16px] z-40 sm:bottom-[22px] sm:right-[22px]">
+            <div className={`chat-panel absolute bottom-[70px] right-0 w-[300px] origin-bottom-right overflow-hidden rounded-[13px] border border-[#dce3ef] bg-white ${open ? "is-open" : ""}`}>
+                <div className="flex items-center border-b border-[#edf0f6] px-[16px] py-[13px]">
+                    <div className="flex h-[40px] w-[40px] items-center justify-center rounded-[10px] bg-[#1f263e] text-[21px] text-white">
+                        <Icon name="chatbubble-ellipses" />
+                    </div>
 
-                <div className="mt-[12px] max-h-[190px] space-y-[8px] overflow-y-auto pr-[3px]">
-                    {messages.map((message) => (
-                        <div key={message.id} className={`max-w-[85%] rounded-[7px] px-[9px] py-[7px] text-[10px] leading-[14px] ${message.type === "user" ? "ml-auto bg-[#5869ee] text-white" : "bg-[#f3f6fb] text-[#727c8f]"}`}>
-                            {message.text}
-                        </div>
-                    ))}
+                    <div className="ml-[10px]">
+                        <strong className="block text-[12px] font-semibold text-[#263047]">
+                            Coinspace Support
+                        </strong>
+
+                        <span className="mt-[1px] flex items-center gap-[4px] text-[9px] text-[#27af91]">
+                            <span className="h-[6px] w-[6px] rounded-full bg-[#26cda3]"></span>
+                            Online now
+                        </span>
+                    </div>
                 </div>
 
-                <form onSubmit={sendMessage} className="mt-[11px] flex items-center gap-[6px]">
-                    <input value={input} onChange={(event) => setInput(event.target.value)} type="text" placeholder="Write a message..." className="h-[35px] min-w-0 flex-1 rounded-[5px] border border-[#e0e5ef] px-[9px] text-[10px] outline-none focus:border-[#6071ef]" />
+                <div ref={messagesRef} className="chat-messages max-h-[270px] min-h-[170px] overflow-y-auto bg-[#fbfcff] px-[13px] py-[13px]">
+                    <div className="space-y-[9px]">
+                        {messages.map((message) => (
+                            <div key={message.id} className={`chat-bubble max-w-[86%] rounded-[9px] px-[11px] py-[8px] text-[10px] leading-[15px] ${message.type === "user" ? "ml-auto bg-[#5669ee] text-white" : "bg-white text-[#657085] shadow-[0_2px_7px_rgba(51,67,100,.04)]"}`}>
+                                {message.text}
+                            </div>
+                        ))}
 
-                    <button type="submit" className="flex h-[35px] w-[35px] shrink-0 items-center justify-center rounded-[5px] bg-[#5365ec] text-[16px] text-white" aria-label="Send message">
+                        {replying && (
+                            <div className="inline-flex items-center gap-[4px] rounded-[9px] bg-white px-[12px] py-[10px] shadow-[0_2px_7px_rgba(51,67,100,.04)]">
+                                <span className="typing-dot"></span>
+
+                                <span className="typing-dot"></span>
+
+                                <span className="typing-dot"></span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <form onSubmit={sendMessage} className="flex items-center gap-[7px] border-t border-[#edf0f6] bg-white p-[12px]">
+                    <input type="text" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Write a message..." className="chat-input h-[40px] min-w-0 flex-1 rounded-[7px] border border-[#dfe5ee] px-[11px] text-[10px] text-[#465167] outline-none" />
+
+                    <button type="submit" disabled={!input.trim() || replying} className="chat-send flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[7px] bg-[#5365ec] text-[18px] text-white" aria-label="Send message">
                         <Icon name="send" />
                     </button>
                 </form>
             </div>
 
-            <button type="button" onClick={() => setOpen((value) => !value)} className="chat-trigger flex h-[47px] w-[47px] items-center justify-center rounded-[7px] bg-[#1f263e] text-[23px] text-white" aria-label={open ? "Close support chat" : "Open support chat"}>
-                <Icon name={open ? "close-outline" : "chatbox"} />
+            <button type="button" onClick={() => setOpen((value) => !value)} className={`chat-trigger relative flex h-[60px] w-[60px] items-center justify-center rounded-[13px] bg-[#1f263e] text-[33px] text-white ${open ? "is-active" : ""}`} aria-label={open ? "Close support chat" : "Open support chat"}>
+                <Icon name={open ? "close-outline" : "chatbubble-ellipses"} />
+
+                {!open && <span className="chat-online absolute right-[5px] top-[5px] h-[11px] w-[11px] rounded-full border-[2px] border-[#1f263e] bg-[#20d5a7]"></span>}
             </button>
         </div>
     );
 }
 
-/* Application */
+/* ===================================
+   Application
+=================================== */
+
 export default function App() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+    const [desktopCollapsed, setDesktopCollapsed] = useState(false);
+
     const [selectedSymbol, setSelectedSymbol] = useState("BTC");
+
     const [activityRows, setActivityRows] = useState(defaultActivities);
+
+    const toggleNavigation = () => {
+        if (window.matchMedia("(min-width: 1280px)").matches) {
+            setDesktopCollapsed((value) => !value);
+
+            return;
+        }
+
+        setMobileSidebarOpen(true);
+    };
 
     useEffect(() => {
         const handleEscape = (event) => {
             if (event.key === "Escape") {
-                setSidebarOpen(false);
+                setMobileSidebarOpen(false);
             }
         };
 
@@ -985,23 +1405,49 @@ export default function App() {
         return () => window.removeEventListener("keydown", handleEscape);
     }, []);
 
+    useEffect(() => {
+        if (window.innerWidth >= 1280) return undefined;
+
+        document.body.style.overflow = mobileSidebarOpen ? "hidden" : "";
+
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [mobileSidebarOpen]);
+
     const addActivity = (activity) => {
         setActivityRows((rows) => [activity, ...rows]);
     };
 
     return (
         <div id="dashboard" className="min-h-screen bg-[#f3f6fe] text-[#4e5760]">
-            <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+            <Sidebar
+                open={mobileSidebarOpen}
+                onClose={() => setMobileSidebarOpen(false)}
+                desktopCollapsed={desktopCollapsed}
+            />
 
-            <Header onMenu={() => setSidebarOpen(true)} selectedSymbol={selectedSymbol} onSelectCoin={setSelectedSymbol} />
+            <Header
+                onMenu={toggleNavigation}
+                selectedSymbol={selectedSymbol}
+                onSelectCoin={setSelectedSymbol}
+                desktopCollapsed={desktopCollapsed}
+            />
 
-            <main className="min-h-screen pt-[72px] xl:ml-[217px]">
-                <div className="dashboard-content w-full px-[11px] pb-[28px] pt-[17px] sm:px-5 sm:pt-[24px] xl:px-[40px]">
+            <main className={`dashboard-main min-h-screen pt-[68px] sm:pt-[72px] ${desktopCollapsed ? "sidebar-is-collapsed" : ""}`}>
+                <div className="dashboard-container mx-auto w-full max-w-[1400px] px-[10px] pb-[30px] pt-[16px] sm:px-5 sm:pt-[24px] xl:px-[30px]">
                     <DashboardToolbar />
 
-                    <CoinOverview selectedSymbol={selectedSymbol} onSelectCoin={setSelectedSymbol} />
+                    <CoinOverview
+                        selectedSymbol={selectedSymbol}
+                        onSelectCoin={setSelectedSymbol}
+                    />
 
-                    <TradingArea selectedSymbol={selectedSymbol} onSelectCoin={setSelectedSymbol} onActivityAdd={addActivity} />
+                    <TradingArea
+                        selectedSymbol={selectedSymbol}
+                        onSelectCoin={setSelectedSymbol}
+                        onActivityAdd={addActivity}
+                    />
 
                     <div className="grid grid-cols-1 gap-[18px] xl:grid-cols-2">
                         <LatestActivities activitiesData={activityRows} />

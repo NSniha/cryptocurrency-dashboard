@@ -1,19 +1,22 @@
 @import "tailwindcss";
 
-/* Dashboard Foundation */
+/* ===================================
+   Foundation
+=================================== */
+
 :root {
     font-family: "Roboto", Arial, Helvetica, sans-serif;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
     --dashboard-bg: #f3f6fe;
     --sidebar-bg: #1f263e;
     --sidebar-active: #303750;
     --border: #dfe5f9;
     --text: #4e5760;
     --heading: #202739;
-    --muted: #aeb5c1;
     --blue: #5365ee;
     --cyan: #46bee9;
     --green: #15bfae;
@@ -29,7 +32,6 @@
 
 html {
     scroll-behavior: smooth;
-    font-family: "Roboto", Arial, Helvetica, sans-serif;
 }
 
 body {
@@ -78,7 +80,7 @@ input:focus-visible,
 textarea:focus-visible,
 select:focus-visible,
 a:focus-visible {
-    outline: 2px solid rgba(83, 101, 238, 0.42);
+    outline: 2px solid rgba(83, 101, 238, 0.4);
     outline-offset: 2px;
 }
 
@@ -108,18 +110,38 @@ p {
     color: #fff;
 }
 
-/* Main Layout */
+/* ===================================
+   Layout
+=================================== */
+
 .dashboard-sidebar {
+    transform: translateX(-100%);
     box-shadow: 1px 0 0 rgba(255, 255, 255, 0.015);
     transition: transform 320ms var(--ease);
 }
 
-.dashboard-header {
-    box-shadow: 0 1px 5px rgba(49, 65, 102, 0.025);
+.dashboard-sidebar.is-mobile-open {
+    transform: translateX(0);
 }
 
-.dashboard-content {
-    animation: dashboard-in 520ms var(--ease) both;
+.dashboard-header {
+    box-shadow: 0 2px 8px rgba(49, 65, 102, 0.025);
+    transition:
+        left 320ms var(--ease),
+        height 200ms ease;
+}
+
+.dashboard-main {
+    transition: margin-left 320ms var(--ease);
+}
+
+.dashboard-container {
+    animation: dashboard-in 500ms var(--ease) both;
+}
+
+.header-container,
+.dashboard-container {
+    width: 100%;
 }
 
 @keyframes dashboard-in {
@@ -134,7 +156,10 @@ p {
     }
 }
 
-/* Sidebar */
+/* ===================================
+   Sidebar
+=================================== */
+
 .sidebar-overlay {
     visibility: hidden;
     opacity: 0;
@@ -148,6 +173,25 @@ p {
 .sidebar-overlay.is-visible {
     visibility: visible;
     opacity: 1;
+}
+
+.sidebar-close {
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 4px 13px rgba(0, 0, 0, 0.08);
+    transition:
+        background-color 180ms ease,
+        border-color 180ms ease,
+        transform 180ms ease;
+}
+
+.sidebar-close:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.sidebar-close:active {
+    transform: scale(0.95);
 }
 
 .sidebar-link {
@@ -182,93 +226,114 @@ p {
     background: rgba(255, 255, 255, 0.025);
 }
 
-/* Header Buttons */
-.top-icon-button {
+/* ===================================
+   Header
+=================================== */
+
+.header-icon-button {
     display: flex;
     width: 42px;
     height: 42px;
     flex: 0 0 42px;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
-    color: #69758a;
-    font-size: 25px;
+    border-radius: 8px;
+    background: transparent;
+    color: #68758a;
+    font-size: 24px;
     transition:
         color 180ms ease,
-        background-color 180ms ease,
-        transform 180ms var(--ease);
+        background-color 180ms ease;
 }
 
-.top-icon-button:hover {
+.header-icon-button:hover {
     background: #f6f8fc;
     color: #354157;
-    transform: translateY(-1px);
 }
 
-.profile-button {
+.header-right-actions {
+    gap: 4px;
+}
+
+.header-profile-button {
+    display: flex;
     width: 46px;
     height: 46px;
+    flex: 0 0 46px;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    border-radius: 9px;
+    background: transparent;
     transition:
         background-color 180ms ease,
-        transform 180ms var(--ease);
+        transform 180ms ease;
 }
 
-.profile-button:hover {
-    background: #f6f8fc;
-    transform: translateY(-1px);
-}
-
-.profile-button img {
+.header-profile-button img {
+    width: 38px;
+    height: 38px;
     box-shadow: 0 5px 16px rgba(40, 50, 75, 0.15);
 }
 
+.header-profile-button:hover {
+    background: #f6f8fc;
+}
+
 .language-button {
-    display: flex;
     width: 42px;
     height: 42px;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
-    transition:
-        background-color 180ms ease,
-        transform 180ms var(--ease);
+    border-radius: 8px;
+    transition: background-color 180ms ease;
 }
 
 .language-button:hover {
     background: #f6f8fc;
-    transform: translateY(-1px);
 }
 
-/* Search */
-.search-shell {
-    filter: drop-shadow(0 0 0 transparent);
-}
+/* ===================================
+   Notification
+=================================== */
 
-.dashboard-search {
-    color: #596377;
+.header-notification-button {
+    position: relative;
+    display: flex;
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: transparent;
+    color: #68758a;
+    font-size: 26px;
     transition:
-        background-color 180ms ease,
-        box-shadow 180ms ease;
+        color 180ms ease,
+        background-color 180ms ease;
 }
 
-.dashboard-search::placeholder {
-    color: #c6cbd4;
-    font-weight: 300;
+.header-notification-button:hover,
+.header-notification-button.is-active {
+    background: #f5f7fc;
+    color: #3f4c63;
 }
 
-.dashboard-search:focus {
-    background: #fff;
-    box-shadow:
-        0 0 0 2px rgba(81, 186, 232, 0.13),
-        0 6px 20px rgba(56, 72, 108, 0.06);
+.notification-count {
+    top: 0;
+    right: 0;
+    width: 19px;
+    min-width: 19px;
+    height: 19px;
+    border: 2px solid #fff;
+    font-size: 8px;
+    font-weight: 500;
 }
 
-.search-results,
-.notification-panel {
-    box-shadow: 0 15px 40px rgba(43, 55, 90, 0.14);
+.notification-panel,
+.search-results {
+    z-index: 60;
+    box-shadow: 0 16px 42px rgba(43, 55, 90, 0.14);
     animation: dropdown-in 180ms ease both;
 }
 
@@ -284,7 +349,47 @@ p {
     }
 }
 
-/* Toolbar */
+/* ===================================
+   Mobile Brand
+=================================== */
+
+.mobile-header-brand {
+    min-width: 0;
+}
+
+.mobile-header-brand-name {
+    white-space: nowrap;
+}
+
+/* ===================================
+   Search
+=================================== */
+
+.dashboard-search {
+    color: #596377;
+    transition:
+        background-color 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.dashboard-search::placeholder {
+    color: #c6cbd4;
+    font-weight: 300;
+}
+
+.dashboard-search:focus {
+    background: #fff;
+    border-color: rgba(81, 186, 232, 0.32);
+    box-shadow:
+        0 0 0 2px rgba(81, 186, 232, 0.11),
+        0 7px 20px rgba(56, 72, 108, 0.055);
+}
+
+/* ===================================
+   Toolbar
+=================================== */
+
 .toolbar-button {
     display: flex;
     width: 32px;
@@ -299,12 +404,10 @@ p {
     transition:
         background-color 160ms ease,
         border-color 160ms ease,
-        color 160ms ease,
-        transform 160ms ease;
+        color 160ms ease;
 }
 
 .toolbar-button:hover {
-    transform: translateY(-1px);
     border-color: #d6deeb;
     background: #fafbff;
 }
@@ -341,7 +444,10 @@ p {
     border-bottom: 11px solid #5362ee;
 }
 
-/* Dashboard Cards */
+/* ===================================
+   Cards
+=================================== */
+
 .dashboard-card,
 .coin-card {
     box-shadow: 0 3px 12px rgba(60, 78, 123, 0.025);
@@ -362,13 +468,16 @@ p {
 }
 
 .coin-card.is-selected {
-    border-color: rgba(84, 103, 244, 0.38);
+    border-color: rgba(84, 103, 244, 0.4);
     box-shadow:
         0 0 0 1px rgba(84, 103, 244, 0.04),
         0 8px 22px rgba(60, 77, 123, 0.05);
 }
 
-/* Mobile Overview Slider */
+/* ===================================
+   Coin Slider
+=================================== */
+
 .coin-overview-track {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -377,8 +486,8 @@ p {
 
 .mobile-slider-arrow {
     display: flex;
-    width: 30px;
-    height: 30px;
+    width: 31px;
+    height: 31px;
     align-items: center;
     justify-content: center;
     border: 1px solid #e2e7f1;
@@ -386,11 +495,6 @@ p {
     background: #fff;
     color: #758096;
     font-size: 16px;
-    box-shadow: 0 3px 10px rgba(60, 76, 116, 0.03);
-    transition:
-        border-color 160ms ease,
-        color 160ms ease,
-        opacity 160ms ease;
 }
 
 .mobile-slider-arrow:disabled {
@@ -412,9 +516,12 @@ p {
     background: #5669ef;
 }
 
-/* Trading */
+/* ===================================
+   Trading
+=================================== */
+
 .buy-button {
-    box-shadow: 0 5px 10px rgba(66, 79, 232, 0.18);
+    box-shadow: 0 5px 11px rgba(66, 79, 232, 0.19);
     transition:
         transform 170ms ease,
         box-shadow 170ms ease;
@@ -427,7 +534,6 @@ p {
 
 .price-alert-button {
     color: #afb5c0;
-    transition: color 180ms ease;
 }
 
 .price-alert-button span:last-child {
@@ -468,7 +574,10 @@ p {
     }
 }
 
-/* Market */
+/* ===================================
+   Market
+=================================== */
+
 .market-row {
     transition:
         background-color 160ms ease,
@@ -484,7 +593,10 @@ p {
     box-shadow: inset 2px 0 0 #586af0;
 }
 
-/* Activity */
+/* ===================================
+   Activity / News
+=================================== */
+
 .activity-row {
     transition: background-color 160ms ease;
 }
@@ -493,7 +605,6 @@ p {
     background: #fafbff;
 }
 
-/* News */
 .news-card {
     transition:
         transform 200ms var(--ease),
@@ -514,13 +625,7 @@ p {
     transition:
         background-color 180ms ease,
         border-color 180ms ease,
-        color 180ms ease,
-        transform 180ms ease;
-}
-
-.subscribe-button:hover {
-    transform: translateY(-1px);
-    border-color: #cfd7e6;
+        color 180ms ease;
 }
 
 .subscribe-button.is-active {
@@ -529,26 +634,18 @@ p {
     color: #fff;
 }
 
-/* Modal */
+/* ===================================
+   Modal
+=================================== */
+
 .modal-overlay {
     background: rgba(26, 34, 57, 0.5);
     backdrop-filter: blur(4px);
-    animation: modal-overlay-in 180ms ease both;
 }
 
 .modal-card {
     box-shadow: 0 24px 70px rgba(34, 44, 72, 0.22);
     animation: modal-card-in 220ms var(--ease) both;
-}
-
-@keyframes modal-overlay-in {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
 }
 
 @keyframes modal-card-in {
@@ -563,16 +660,21 @@ p {
     }
 }
 
-/* Support */
+/* ===================================
+   Floating Chat
+=================================== */
+
 .chat-panel {
     visibility: hidden;
     opacity: 0;
-    transform: translateY(8px) scale(0.96);
-    box-shadow: 0 16px 45px rgba(32, 38, 62, 0.16);
+    transform: translateY(10px) scale(0.965);
+    box-shadow:
+        0 22px 58px rgba(32, 38, 62, 0.2),
+        0 5px 15px rgba(32, 38, 62, 0.06);
     transition:
-        opacity 200ms ease,
-        transform 200ms var(--ease),
-        visibility 200ms ease;
+        opacity 220ms ease,
+        transform 220ms var(--ease),
+        visibility 220ms ease;
 }
 
 .chat-panel.is-open {
@@ -582,18 +684,122 @@ p {
 }
 
 .chat-trigger {
-    box-shadow: 0 8px 22px rgba(31, 38, 62, 0.18);
+    width: 60px;
+    height: 60px;
+    flex: 0 0 60px;
+    border-radius: 13px;
+    font-size: 33px;
+    box-shadow:
+        0 11px 30px rgba(31, 38, 62, 0.25),
+        0 3px 8px rgba(31, 38, 62, 0.11);
     transition:
-        transform 180ms ease,
-        box-shadow 180ms ease;
+        transform 190ms var(--ease),
+        background-color 190ms ease,
+        box-shadow 190ms ease;
+}
+
+.chat-trigger ion-icon {
+    width: 33px;
+    height: 33px;
+    font-size: 33px;
 }
 
 .chat-trigger:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 11px 27px rgba(31, 38, 62, 0.23);
+    transform: translateY(-3px);
+    box-shadow:
+        0 16px 36px rgba(31, 38, 62, 0.29),
+        0 5px 11px rgba(31, 38, 62, 0.12);
 }
 
-/* Scrollbars */
+.chat-trigger.is-active {
+    background: #5365eb;
+}
+
+.chat-online {
+    box-shadow: 0 0 0 2px rgba(32, 213, 167, 0.14);
+}
+
+.chat-messages {
+    scrollbar-width: thin;
+    scrollbar-color: #d7dfec transparent;
+}
+
+.chat-bubble {
+    animation: chat-bubble-in 220ms var(--ease) both;
+}
+
+@keyframes chat-bubble-in {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chat-input {
+    transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.chat-input:focus {
+    border-color: #6476ed;
+    box-shadow: 0 0 0 2px rgba(83, 101, 236, 0.08);
+}
+
+.chat-send {
+    box-shadow: 0 5px 13px rgba(83, 101, 236, 0.18);
+    transition:
+        opacity 170ms ease,
+        transform 170ms ease;
+}
+
+.chat-send:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.chat-send:disabled {
+    opacity: 0.45;
+}
+
+.typing-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #8792a6;
+    animation: typing-dot 1.15s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes typing-dot {
+    0%,
+    60%,
+    100% {
+        opacity: 0.35;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+}
+
+/* ===================================
+   Scrollbars
+=================================== */
+
 .hide-scrollbar {
     scrollbar-width: none;
 }
@@ -621,31 +827,151 @@ p {
     background: #d7dfef;
 }
 
-/* Tablet */
-@media (max-width: 1279px) {
-    .dashboard-card {
-        box-shadow: 0 5px 16px rgba(58, 75, 116, 0.03);
+/* ===================================
+   Desktop
+=================================== */
+
+@media (min-width: 1280px) {
+    .dashboard-sidebar {
+        transform: translateX(0);
+    }
+
+    .dashboard-sidebar.is-desktop-collapsed {
+        transform: translateX(-100%);
+    }
+
+    .dashboard-header {
+        left: 217px;
+    }
+
+    .dashboard-header.sidebar-is-collapsed {
+        left: 0;
+    }
+
+    .dashboard-main {
+        margin-left: 217px;
+    }
+
+    .dashboard-main.sidebar-is-collapsed {
+        margin-left: 0;
     }
 }
 
-/* Mobile */
+/* ===================================
+   Large Screens
+=================================== */
+
+@media (min-width: 1600px) {
+    .header-container,
+    .dashboard-container {
+        max-width: 1400px;
+    }
+}
+
+/* ===================================
+   Mobile
+=================================== */
+
 @media (max-width: 639px) {
+    .dashboard-header {
+        box-shadow: 0 3px 12px rgba(46, 61, 98, 0.045);
+    }
+
+    .header-container {
+        padding-right: 7px;
+        padding-left: 7px;
+    }
+
+    .header-icon-button {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+        border-radius: 8px;
+        font-size: 22px;
+    }
+
+    .cube-btn{
+        display: none;
+    }
+
+    .header-right-actions {
+        gap: 0;
+    }
+
+    .header-profile-button {
+        width: 39px;
+        height: 39px;
+        flex-basis: 39px;
+        border-radius: 8px;
+    }
+
+    .header-profile-button img {
+        width: 30px;
+        height: 30px;
+        box-shadow: 0 4px 12px rgba(42, 54, 82, 0.14);
+    }
+
+    .header-right-actions > .header-icon-button {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+        font-size: 22px;
+    }
+
+    .header-notification-button {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+        border-radius: 8px;
+        font-size: 23px;
+    }
+
+    .notification-count {
+        top: 0;
+        right: 0;
+        width: 17px;
+        min-width: 17px;
+        height: 17px;
+        border-width: 2px;
+        font-size: 7px;
+    }
+
+    .notification-panel {
+        right: -38px;
+        width: min(285px, calc(100vw - 20px));
+    }
+
+    .mobile-header-brand {
+        max-width: calc(100vw - 174px);
+    }
+
+    .mobile-header-brand img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .mobile-header-brand-name {
+        font-size: 16px;
+        letter-spacing: 0.08em;
+        font-weight: 600;
+    }
+
     .coin-overview-section {
-        margin-left: -11px;
-        margin-right: -11px;
-        padding-left: 11px;
-        padding-right: 11px;
+        margin-right: -10px;
+        margin-left: -10px;
+        padding-right: 10px;
+        padding-left: 10px;
     }
 
     .coin-overview-track {
         display: flex;
         gap: 10px;
         overflow-x: auto;
+        padding-right: 11%;
         scroll-snap-type: x mandatory;
         scroll-behavior: smooth;
         scrollbar-width: none;
         overscroll-behavior-x: contain;
-        padding-right: 12%;
     }
 
     .coin-overview-track::-webkit-scrollbar {
@@ -660,7 +986,7 @@ p {
     }
 
     .chart-shell {
-        height: 247px;
+        height: 235px;
         overflow-x: auto;
         scrollbar-width: none;
     }
@@ -670,45 +996,85 @@ p {
     }
 
     .chart-wrapper {
-        padding-bottom: 7px;
+        padding-bottom: 6px;
     }
 
-    .top-icon-button {
-        width: 39px;
-        height: 39px;
-        flex-basis: 39px;
-        border-radius: 9px;
-        font-size: 23px;
+    .chat-panel {
+        width: min(300px, calc(100vw - 28px));
     }
 
-    .language-button {
-        width: 39px;
-        height: 39px;
+    .chat-trigger {
+        width: 54px;
+        height: 54px;
+        flex-basis: 54px;
+        border-radius: 12px;
+        font-size: 29px;
     }
 
-    .language-button img {
-        width: 25px;
-        height: 25px;
-    }
-
-    .dashboard-card {
-        border-radius: 10px;
+    .chat-trigger ion-icon {
+        width: 29px;
+        height: 29px;
+        font-size: 29px;
     }
 
     .coin-card:hover,
     .news-card:hover,
-    .top-icon-button:hover,
-    .profile-button:hover,
-    .language-button:hover,
     .buy-button:hover,
-    .subscribe-button:hover,
     .chat-trigger:hover {
         transform: none;
     }
 }
 
-/* Small Mobile */
-@media (max-width: 420px) {
+/* ===================================
+   Small Mobile
+=================================== */
+
+@media (max-width: 380px) {
+    .header-container {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+
+    .header-icon-button {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+        font-size: 21px;
+    }
+
+    .header-profile-button,
+    .header-right-actions > .header-icon-button {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+    }
+
+    .header-profile-button img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .header-notification-button {
+        width: 37px;
+        height: 37px;
+        flex-basis: 37px;
+        font-size: 22px;
+    }
+
+    .mobile-header-brand {
+        max-width: calc(100vw - 160px);
+    }
+
+    .mobile-header-brand img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .mobile-header-brand-name {
+        font-size: 9.5px;
+        letter-spacing: 0.075em;
+    }
+
     .coin-overview-track .coin-card {
         width: 91%;
         min-width: 91%;
@@ -716,36 +1082,14 @@ p {
     }
 
     .chart-shell {
-        height: 232px;
-    }
-
-    .trading-stats {
-        min-height: 45px;
-    }
-
-    .top-icon-button {
-        width: 37px;
-        height: 37px;
-        flex-basis: 37px;
-        font-size: 22px;
-    }
-
-    .language-button {
-        width: 37px;
-        height: 37px;
-    }
-
-    .language-button img {
-        width: 24px;
-        height: 24px;
-    }
-
-    .chat-panel {
-        width: min(260px, calc(100vw - 28px));
+        height: 218px;
     }
 }
 
-/* Reduced Motion */
+/* ===================================
+   Reduced Motion
+=================================== */
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
